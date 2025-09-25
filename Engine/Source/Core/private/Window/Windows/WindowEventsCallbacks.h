@@ -4,9 +4,44 @@
 #include <Constants.h>
 #include <Window/IWindow.h>
 #include <Window.h>
+#include "InputConfig.h"
 
 namespace GameEngine::Core
 {
+	
+   inline void OnKeyDown(WPARAM key, Camera* camera)
+   {
+      float speed = 0.5f;
+
+      /*if (key == Config::GetKey("Forward"))
+         camera->MoveForward(speed);
+      if (key == Config::GetKey("Backward"))
+         camera->MoveForward(-speed);
+      if (key == Config::GetKey("Left"))
+         camera->MoveRight(speed);
+      if (key == Config::GetKey("Right"))
+         camera->MoveRight(-speed);
+      if (key == Config::GetKey("Up"))
+         camera->MoveUp(speed);
+      if (key == Config::GetKey("Down"))
+         camera->MoveUp(-speed);*/
+
+      switch (key)
+      {
+      case 'W': camera->MoveForward(speed); break;
+      case 'S': camera->MoveForward(-speed); break;
+      case 'A': camera->MoveRight(speed); break;
+      case 'D': camera->MoveRight(-speed); break;
+      case VK_SPACE: camera->MoveUp(speed); break;
+      case VK_SHIFT: camera->MoveUp(-speed); break;
+      }
+   }
+
+    inline void OnKeyUp(WPARAM key, Camera* camera)
+    {
+        (void)key;
+        (void)camera;
+    }
     void OnMouseDown(WPARAM btnState, int x, int y, Window* window)
     {
         window->SetMousePos(x, y);

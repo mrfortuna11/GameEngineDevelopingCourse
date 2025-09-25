@@ -51,4 +51,20 @@ namespace GameEngine::Core
         m_ViewDir = rotationMatrixX * rotationMatrixY * m_ViewDir;
         m_ViewDir = m_ViewDir.Normalized();
 	}
+   void Camera::MoveForward(float amount)
+   {
+      m_Position = m_Position + m_ViewDir.Normalized() * amount;
+   }
+
+   void Camera::MoveRight(float amount)
+   {
+      Math::Vector3f right = m_ViewDir.CrossProduct(Math::Vector3f(0, 1, 0)).Normalized();
+      m_Position = m_Position + right * amount;
+   }
+
+   void Camera::MoveUp(float amount)
+   {
+      m_Position = m_Position + Math::Vector3f(0, 1, 0) * amount;
+   }
+
 }
