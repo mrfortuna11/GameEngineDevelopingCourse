@@ -9,14 +9,16 @@ std::unordered_map<std::string, int> Config::s_KeyBindings;
 
 int Config::KeyNameToVK(const std::string& keyName)
 {
-    if (keyName.size() == 1 && std::isalpha(keyName[0]))
+    try
     {
-       SHORT vk = VkKeyScanA(static_cast<char>(toupper(keyName[0])));
-       return static_cast<unsigned char>(vk & 0xFF);
+  
+        int vk = std::stoi(keyName, nullptr, 0); 
+        return vk;
     }
-    else if (keyName == "Space") return VK_SPACE;
-    else if (keyName == "Shift") return VK_SHIFT;
-    return 0;
+    catch (...)
+    {
+        return 0; 
+    }
 }
 
 void Config::Load()
