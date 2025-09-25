@@ -59,7 +59,7 @@ endif()
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/config.ini
-    ${CMAKE_CURRENT_BINARY_DIR}/config.ini
+    ${CMAKE_CURRENT_BINARY_DIR}/../Game/config.ini
     COPYONLY
 )
 

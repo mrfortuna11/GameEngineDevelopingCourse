@@ -1,4 +1,5 @@
 #include <Camera.h>
+#include <Timer.h>
 
 namespace GameEngine::Core
 {

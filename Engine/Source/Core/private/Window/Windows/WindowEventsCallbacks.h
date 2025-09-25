@@ -8,12 +8,12 @@
 
 namespace GameEngine::Core
 {
-	
-   inline void OnKeyDown(WPARAM key, Camera* camera)
+
+   void OnKeyDown(WPARAM key, Camera* camera)
    {
       float speed = 0.5f;
 
-      /*if (key == Config::GetKey("Forward"))
+      if (key == Config::GetKey("Forward"))
          camera->MoveForward(speed);
       if (key == Config::GetKey("Backward"))
          camera->MoveForward(-speed);
@@ -24,9 +24,9 @@ namespace GameEngine::Core
       if (key == Config::GetKey("Up"))
          camera->MoveUp(speed);
       if (key == Config::GetKey("Down"))
-         camera->MoveUp(-speed);*/
+         camera->MoveUp(-speed);
 
-      switch (key)
+      /*switch (key)
       {
       case 'W': camera->MoveForward(speed); break;
       case 'S': camera->MoveForward(-speed); break;
@@ -34,10 +34,10 @@ namespace GameEngine::Core
       case 'D': camera->MoveRight(-speed); break;
       case VK_SPACE: camera->MoveUp(speed); break;
       case VK_SHIFT: camera->MoveUp(-speed); break;
-      }
+      }*/
    }
 
-    inline void OnKeyUp(WPARAM key, Camera* camera)
+    void OnKeyUp(WPARAM key, Camera* camera)
     {
         (void)key;
         (void)camera;
