@@ -23,7 +23,7 @@ namespace GameEngine::Render
 		return m_RenderData->GetPosition(frame);
 	}
 
-	void RenderObject::SetPosition(Math::Vector3f position, size_t frame)
+	void RenderObject::SetPosition (Math::Vector3f position, size_t frame)
 	{
 		m_RenderData->SetPosition(position, frame);
 	}

@@ -1,82 +1,134 @@
-#include <Camera.h>
+﻿#include <Camera.h>
 #include <DefaultGeometry.h>
 #include <Game.h>
 #include <GameObject.h>
 #include <Input/InputHandler.h>
+#include <TypeComponent.h>
+#include <PoolAllocator.h>
+#include <random>
 
 namespace GameEngine
 {
-	Game::Game(
-		std::function<bool()> PlatformLoopFunc
-	) :
-		PlatformLoop(PlatformLoopFunc)
-	{
-		Core::g_MainCamera = new Core::Camera();
-		Core::g_MainCamera->SetPosition(Math::Vector3f(0.0f, 6.0f, -6.0f));
-		Core::g_MainCamera->SetViewDir(Math::Vector3f(0.0f, -6.0f, 6.0f).Normalized());
+   constexpr size_t MaxGameObjectSize = std::max({
+       sizeof(GameObject),
+       sizeof(JumpingCube),
+       sizeof(MovingCube),
+       sizeof(PlayerCube)
+      });
 
-		m_renderThread = std::make_unique<Render::RenderThread>();
+   constexpr size_t MaxGameObjectAlign = std::max({
+       alignof(GameObject),
+       alignof(JumpingCube),
+       alignof(MovingCube),
+       alignof(PlayerCube)
+      });
 
-		// How many objects do we want to create
-		for (int i = 0; i < 3; ++i)
-		{
-			m_Objects.push_back(new GameObject());
-			Render::RenderObject** renderObject = m_Objects.back()->GetRenderObjectRef();
-			m_renderThread->EnqueueCommand(Render::ERC::CreateRenderObject, RenderCore::DefaultGeometry::Cube(), renderObject);
-		}
+   PoolAllocator<GameObject, 100, MaxGameObjectSize, MaxGameObjectAlign> g_ObjectPool;
 
-		Core::g_InputHandler->RegisterCallback("GoForward", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetViewDir()); });
-		Core::g_InputHandler->RegisterCallback("GoBack", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetViewDir()); });
-		Core::g_InputHandler->RegisterCallback("GoRight", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetRightDir()); });
-		Core::g_InputHandler->RegisterCallback("GoLeft", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetRightDir()); });
-	}
+   Game::Game(std::function<bool()> PlatformLoopFunc)
+      : PlatformLoop(PlatformLoopFunc)
+   {
+      Core::g_MainCamera = new Core::Camera();
+      Core::g_MainCamera->SetPosition(Math::Vector3f(0.0f, 6.0f, -6.0f));
+      Core::g_MainCamera->SetViewDir(Math::Vector3f(0.0f, -6.0f, 6.0f).Normalized());
+      PlayerCube* g_Player = nullptr;
 
-	void Game::Run()
-	{
-		assert(PlatformLoop != nullptr);
+      m_renderThread = std::make_unique<Render::RenderThread>();
+      m_Objects.reserve(100);
 
-		m_GameTimer.Reset();
+      std::mt19937 rng(std::random_device{}());
+      std::uniform_int_distribution<int> dist(0, 2);
 
-		bool quit = false;
-		while (!quit)
-		{
-			m_GameTimer.Tick();
-			float dt = m_GameTimer.GetDeltaTime();
+      for (int i = 0; i < 100; ++i)
+      {
+         GameObject* obj = nullptr;
 
-			Core::g_MainWindowsApplication->Update();
-			Core::g_InputHandler->Update();
-			Core::g_MainCamera->Update(dt);
+         int type = dist(rng);
+         if (type == 0)
+            obj = g_ObjectPool.Allocate<JumpingCube>();
+         else if (type == 1)
+            obj = g_ObjectPool.Allocate<MovingCube>();
+         else
+            obj = g_ObjectPool.Allocate<PlayerCube>();
 
-			Update(dt);
 
-			m_renderThread->OnEndFrame();
+         m_Objects.push_back(obj);
+         Render::RenderObject** renderObject = m_Objects.back()->GetRenderObjectRef();
+         m_renderThread->EnqueueCommand(Render::ERC::CreateRenderObject, RenderCore::DefaultGeometry::Cube(), renderObject);
 
-			// The most common idea for such a loop is that it returns false when quit is required, or true otherwise
-			quit = !PlatformLoop();
-		}
-	}
 
-	void Game::Update(float dt)
-	{
-		for (int i = 0; i < m_Objects.size(); ++i)
-		{
-			Math::Vector3f pos = m_Objects[i]->GetPosition();
+         obj->SetPosition(Math::Vector3f((float)(i % 10) * 2.0f, 0.0f, (float)(i / 10) * 2.0f),
+            m_renderThread->GetMainFrame());
+      }
 
-			// Showcase
-			if (i == 0)
-			{
-				pos.x += 0.5f * dt;
-			}
-			else if (i == 1)
-			{
-				pos.y -= 0.5f * dt;
-			}
-			else if (i == 2)
-			{
-				pos.x += 0.5f * dt;
-				pos.y -= 0.5f * dt;
-			}
-			m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
-		}
-	}
+      Core::g_InputHandler->RegisterCallback("GoForward", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetViewDir()); });
+      Core::g_InputHandler->RegisterCallback("GoBack", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetViewDir()); });
+      Core::g_InputHandler->RegisterCallback("GoRight", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetRightDir()); });
+      Core::g_InputHandler->RegisterCallback("GoLeft", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetRightDir()); });
+
+
+      Core::g_InputHandler->RegisterCallback("Forward", [&]() {
+         for (size_t i = 0; i < m_Objects.size(); ++i)
+         {
+            if (m_Objects[i]->IsPlayerControlled())
+               static_cast<PlayerCube*>(m_Objects[i])->Move(Math::Vector3f(0, 0, 1));
+         }
+         });
+      Core::g_InputHandler->RegisterCallback("Back", [&]() {
+         for (size_t i = 0; i < m_Objects.size(); ++i)
+         {
+            if (m_Objects[i]->IsPlayerControlled())
+               static_cast<PlayerCube*>(m_Objects[i])->Move(Math::Vector3f(0, 0, -1));
+         }
+         });
+      Core::g_InputHandler->RegisterCallback("Right", [&]() {
+         for (size_t i = 0; i < m_Objects.size(); ++i)
+         {
+            if (m_Objects[i]->IsPlayerControlled())
+               static_cast<PlayerCube*>(m_Objects[i])->Move(Math::Vector3f(1, 0, 0));
+         }
+         });
+      Core::g_InputHandler->RegisterCallback("Left", [&]() {
+         for (size_t i = 0; i < m_Objects.size(); ++i)
+         {
+            if (m_Objects[i]->IsPlayerControlled())
+               static_cast<PlayerCube*>(m_Objects[i])->Move(Math::Vector3f(-1, 0, 0));
+         }
+         });
+   }
+
+   
+
+   void Game::Run()
+   {
+      assert(PlatformLoop != nullptr);
+
+      m_GameTimer.Reset();
+      bool quit = false;
+
+      while (!quit)
+      {
+         m_GameTimer.Tick();
+         float dt = m_GameTimer.GetDeltaTime();
+
+         Core::g_MainWindowsApplication->Update();
+         Core::g_InputHandler->Update();
+         Core::g_MainCamera->Update(dt);
+
+         Update(dt);
+
+         m_renderThread->OnEndFrame();
+
+         quit = !PlatformLoop();
+      }
+   }
+
+   void Game::Update(float dt)
+   {
+      size_t frame = m_renderThread->GetMainFrame();
+      for (auto* obj : m_Objects)
+      {
+         obj->Update(dt, frame);
+      }
+   }
 }

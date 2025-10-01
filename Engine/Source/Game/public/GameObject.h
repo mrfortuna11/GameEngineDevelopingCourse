@@ -1,37 +1,36 @@
 #pragma once
 
 #include <RenderObject.h>
-#include <RenderThread.h>
 #include <Vector.h>
 
 namespace GameEngine
 {
-	class GameObject final
-	{
-	public:
-		GameObject() = default;
+   class GameObject
+   {
+   public:
+      GameObject() = default;
+      virtual ~GameObject() = default;
 
-	public:
-		Render::RenderObject** GetRenderObjectRef() { return &m_RenderObject; }
+      Render::RenderObject** GetRenderObjectRef() { return &m_RenderObject; }
 
-		void SetPosition(Math::Vector3f position, size_t frame)
-		{
-			m_Position = position;
+      virtual void Update(float dt, size_t frame) {}
 
-			if (m_RenderObject) [[likely]]
-			{
-				m_RenderObject->SetPosition(position, frame);
-			}
-		}
+      virtual bool IsPlayerControlled() const { return false; }
 
-		Math::Vector3f GetPosition()
-		{
-			return m_Position;
-		}
+      void SetPosition(const Math::Vector3f& position, size_t frame)
+      {
+         m_Position = position;
 
-	protected:
-		Render::RenderObject* m_RenderObject = nullptr;
+         if (m_RenderObject) [[likely]]
+            m_RenderObject->SetPosition(position, frame);
+      }
 
-		Math::Vector3f m_Position = Math::Vector3f::Zero();
-	};
+      Math::Vector3f GetPosition() const { return m_Position; }
+
+   protected:
+      Render::RenderObject* m_RenderObject = nullptr;
+      Math::Vector3f m_Position = Math::Vector3f::Zero();
+      Math::Vector3f m_MoveDir = Math::Vector3f::Zero();
+      Math::Vector3f m_CurrentMoveDir = Math::Vector3f::Zero();
+   };
 }
