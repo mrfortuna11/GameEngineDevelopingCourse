@@ -30,7 +30,7 @@ void GameFramework::Init()
 		.set(RenderObjectPtr{ new Render::RenderObject() });
 
 	m_World.entity()
-		.set(Position{ Math::Vector3f(-2.f, 10.f, 10.f) })
+		.set(Position{ Math::Vector3f(0.f, 0.f, 0.f) })
 		.set(Obstacle([&]()
 			{
 				m_World.each([&](Player& player)

@@ -14,6 +14,30 @@ using namespace GameEngine;
 
 void RegisterEcsControlSystems(flecs::world& world)
 {
+	world.system<Position, CameraPtr, const Speed, const ControllerPtr>()
+		.each([&](flecs::entity e, Position& position, CameraPtr& camera, const Speed& speed, const ControllerPtr& controller)
+			{
+				Math::Vector3f currentMoveDir = Math::Vector3f::Zero();
+				if (controller.ptr->IsPressed("GoLeft"))
+				{
+					currentMoveDir = currentMoveDir - camera.ptr->GetRightDir();
+				}
+				if (controller.ptr->IsPressed("GoRight"))
+				{
+					currentMoveDir = currentMoveDir + camera.ptr->GetRightDir();
+				}
+				if (controller.ptr->IsPressed("GoBack"))
+				{
+					currentMoveDir = currentMoveDir - camera.ptr->GetViewDir();
+				}
+				if (controller.ptr->IsPressed("GoForward"))
+				{
+					currentMoveDir = currentMoveDir + camera.ptr->GetViewDir();
+				}
+				position.value = position.value + currentMoveDir.Normalized() * speed * world.delta_time();
+				camera.ptr->SetPosition(position.value);
+			});
+
 	world.system<Position, CameraPtr, const ControllerPtr, LocalTimer, Player>()
 		.each([&](flecs::entity e, Position& position, CameraPtr& camera, const ControllerPtr& controller, LocalTimer& time, Player& player)
 			{
@@ -35,7 +59,7 @@ void RegisterEcsControlSystems(flecs::world& world)
 						.set(Position(camera.ptr->GetPosition()))
 						.set(Velocity(bulletVelocity))
 						.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
-						.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
+						.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 0.f) })
 						.set(Bounciness{ 1.f })
 						.set(Bullet{ 5 })
 						.set(LocalTimer())
@@ -50,7 +74,6 @@ void RegisterEcsControlSystems(flecs::world& world)
 				if (time.timer.GetTotalTime() >= bullet.timeToDeath)
 				{
 					position.value = GameEngine::Math::Vector3f(10000, 10000, 10000);
-					e.clear();
 				}
 			});
 
