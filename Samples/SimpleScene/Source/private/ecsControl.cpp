@@ -39,14 +39,19 @@ void RegisterEcsControlSystems(flecs::world& world)
 			});
 
 	world.system<Position, CameraPtr, const ControllerPtr, LocalTimer, Player>()
-		.each([&](flecs::entity e, Position& position, CameraPtr& camera, const ControllerPtr& controller, LocalTimer& time, Player& player)
+		.each([&](flecs::entity e, Position& position, CameraPtr& camera,
+			const ControllerPtr& controller, LocalTimer& time, Player& player)
 			{
-				if (time.timer.GetTotalTime() - player.lastRecharged < player.timeToRecharge) return;
+				if (time.timer.GetTotalTime() - player.lastRecharged < player.timeToRecharge)
+					return;
 
-				if (controller.ptr->IsPressed("Shoot") && time.timer.GetTotalTime() - player.lastShooted > player.timeToShoot)
+				if (controller.ptr->IsPressed("Shoot") &&
+					time.timer.GetTotalTime() - player.lastShooted > player.timeToShoot &&
+					player.curAmmoCount > 0) 
 				{
 					player.lastShooted = time.timer.GetTotalTime();
 					player.curAmmoCount -= 1;
+
 					if (player.curAmmoCount <= 0)
 					{
 						player.curAmmoCount = player.maxAmmoCount;
@@ -60,18 +65,18 @@ void RegisterEcsControlSystems(flecs::world& world)
 						.set(Velocity(bulletVelocity))
 						.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
 						.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 0.f) })
-						.set(Bounciness{ 1.f })
-						.set(Bullet{ 5 })
-						.set(LocalTimer())
 						.set(GeometryPtr{ RenderCore::DefaultGeometry::littleCube() })
-						.set(RenderObjectPtr{ new Render::RenderObject() });
+						.set(RenderObjectPtr{ new Render::RenderObject() })
+						.set(Bounciness{ 1.f })
+						.set(Bullet{ 5.0, false }) 
+						.set(LocalTimer());
 				}
 			});
 
 	world.system<LocalTimer, Bullet, Position>()
 		.each([&](flecs::entity e, LocalTimer& time, Bullet& bullet, Position& position)
 			{
-				if (time.timer.GetTotalTime() >= bullet.timeToDeath)
+				if (bullet.hasCollided && time.timer.GetTotalTime() >= bullet.timeToDeath)
 				{
 					position.value = GameEngine::Math::Vector3f(10000, 10000, 10000);
 				}
@@ -80,16 +85,18 @@ void RegisterEcsControlSystems(flecs::world& world)
 	world.system<Bullet, Position>()
 		.each([&](flecs::entity e1, Bullet& bullet, Position& position1)
 			{
-				world.each([&](flecs::entity e2, Obstacle obsacle, Position& position2)
+				world.each([&](flecs::entity e2, Obstacle& obsacle, Position& position2)
 					{
 						if (e1 != e2 && (position1.value - position2.value).GetLength() <= 1)
 						{
 							if (obsacle.onCollision != nullptr)
 							{
 								obsacle.onCollision();
+								obsacle.onCollision = nullptr;
 							}
-
+							bullet.hasCollided = true;
 							position2.value = GameEngine::Math::Vector3f(10000, 10000, 10000);
+
 						}
 					});
 			});

@@ -25,17 +25,12 @@ void GameFramework::Init()
 
 	m_World.entity()
 		.set(Position{ Math::Vector3f(0.f, 0.f, 0.f) })
-		.set(Obstacle(nullptr))
-		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
-		.set(RenderObjectPtr{ new Render::RenderObject() });
-
-	m_World.entity()
-		.set(Position{ Math::Vector3f(0.f, 0.f, 0.f) })
 		.set(Obstacle([&]()
 			{
 				m_World.each([&](Player& player)
 					{
 						player.maxAmmoCount += 3;
+
 					});
 			}))
 		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })

@@ -1,4 +1,5 @@
 #include <ecsPhys.h>
+#include <ecsControl.h>
 #include <flecs.h>
 
 namespace
@@ -28,22 +29,29 @@ void RegisterEcsPhysSystems(flecs::world& world)
 	});
 
 
-	world.system<Velocity, Position, const BouncePlane, const Bounciness>()
-		.each([&](Velocity& vel, Position& pos, const BouncePlane& plane, const Bounciness& bounciness)
-	{
-		float dotPos = plane.value.x * pos.value.x + plane.value.y * pos.value.y + plane.value.z * pos.value.z;
-		float dotVel = plane.value.x * vel.value.x + plane.value.y * vel.value.y + plane.value.z * vel.value.z;
-		if (dotPos < plane.value.w)
-		{
-			pos.value.x -= (dotPos - plane.value.w) * plane.value.x;
-			pos.value.y -= (dotPos - plane.value.w) * plane.value.y;
-			pos.value.z -= (dotPos - plane.value.w) * plane.value.z;
+	world.system<Velocity, Position, const BouncePlane, const Bounciness, Bullet*>()
+		.each([&](Velocity& vel, Position& pos, const BouncePlane& plane,
+			const Bounciness& bounciness, Bullet* bullet)
+			{
+				float dotPos = plane.value.x * pos.value.x + plane.value.y * pos.value.y + plane.value.z * pos.value.z;
+				if (dotPos < plane.value.w)
+				{
+					pos.value.x -= (dotPos - plane.value.w) * plane.value.x;
+					pos.value.y -= (dotPos - plane.value.w) * plane.value.y;
+					pos.value.z -= (dotPos - plane.value.w) * plane.value.z;
 
-			vel.value.x -= (1.f + bounciness.value) * plane.value.x * dotVel;
-			vel.value.y -= (1.f + bounciness.value) * plane.value.y * dotVel;
-			vel.value.z -= (1.f + bounciness.value) * plane.value.z * dotVel;
-		}
-	});
+					float dotVel = plane.value.x * vel.value.x + plane.value.y * vel.value.y + plane.value.z * vel.value.z;
+					vel.value.x -= (1.f + bounciness.value) * plane.value.x * dotVel;
+					vel.value.y -= (1.f + bounciness.value) * plane.value.y * dotVel;
+					vel.value.z -= (1.f + bounciness.value) * plane.value.z * dotVel;
+
+					if (bullet && !bullet->hasCollided)
+					{
+						bullet->hasCollided = true;
+					}
+				}
+			});
+	
 
 
 	world.system<Velocity, const FrictionAmount>()

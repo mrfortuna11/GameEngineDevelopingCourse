@@ -44,6 +44,7 @@ struct LocalTimer
 struct Bullet
 {
 	float timeToDeath;
+	bool hasCollided; 
 };
 
 struct Obstacle
