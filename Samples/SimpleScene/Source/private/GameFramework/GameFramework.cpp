@@ -15,33 +15,31 @@ void GameFramework::Init()
 	RegisterEcsControlSystems(m_World);
 	RegisterEcsPhysSystems(m_World);
 
-	flecs::entity cubeControl = m_World.entity()
-		.set(Position{ Math::Vector3f(-2.f, 0.f, 0.f) })
-		.set(Velocity{ Math::Vector3f(0.f, 0.f, 0.f) })
+	flecs::entity camera = m_World.entity()
+		.set(Position{ Math::Vector3f(0.0f, 3.0f, -3.0f) })
 		.set(Speed{ 10.f })
-		.set(FrictionAmount{ 0.9f })
-		.set(JumpSpeed{ 10.f })
-		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
-		.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
-		.set(Bounciness{ 0.3f })
-		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
-		.set(RenderObjectPtr{ new Render::RenderObject() })
+		.set(CameraPtr{ Core::g_MainCamera })
+		.set(Player{ 3, 1, 0.2, 3, 0, 0})
+		.set(LocalTimer())
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 
-	flecs::entity cubeMoving = m_World.entity()
-		.set(Position{ Math::Vector3f(2.f, 0.f, 0.f) })
-		.set(Velocity{ Math::Vector3f(0.f, 3.f, 0.f) })
-		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
-		.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
-		.set(Bounciness{ 1.f })
+	m_World.entity()
+		.set(Position{ Math::Vector3f(0.f, 0.f, 0.f) })
+		.set(Obstacle(nullptr))
 		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(RenderObjectPtr{ new Render::RenderObject() });
 
-	flecs::entity camera = m_World.entity()
-		.set(Position{ Math::Vector3f(0.0f, 12.0f, -10.0f) })
-		.set(Speed{ 10.f })
-		.set(CameraPtr{ Core::g_MainCamera })
-		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+	m_World.entity()
+		.set(Position{ Math::Vector3f(-2.f, 10.f, 10.f) })
+		.set(Obstacle([&]()
+			{
+				m_World.each([&](Player& player)
+					{
+						player.maxAmmoCount += 3;
+					});
+			}))
+		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(RenderObjectPtr{ new Render::RenderObject() });
 }
 
 void GameFramework::Update(float dt)
