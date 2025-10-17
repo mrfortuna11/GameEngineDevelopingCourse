@@ -85,7 +85,7 @@ void GameFramework::RegisterECSGameplaySystems(flecs::world& world)
 						.set(Gravity{ 0.f, -9.8065f, 0.f })
 						.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
 						.set(Bounciness{ 0.3f })
-						.set(BulletKill{ 50 })
+						.set(BulletKill{ 250 })
 						.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 						.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
 				}
