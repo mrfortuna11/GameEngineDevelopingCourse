@@ -6,6 +6,8 @@
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
+#include <DefaultGeometry.h>
+#include <RenderObject.h>
 
 using namespace GameEngine;
 
@@ -49,5 +51,6 @@ void RegisterEcsControlSystems(flecs::world& world)
 			}
 		}
 	});
+
 }
 

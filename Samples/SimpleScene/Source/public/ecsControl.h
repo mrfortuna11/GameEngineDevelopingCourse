@@ -23,5 +23,11 @@ struct CameraPtr
 	GameEngine::Core::Camera* ptr;
 };
 
+struct Player
+{
+	float timeShoot;
+	float lastShoot;
+};
+
 void RegisterEcsControlSystems(flecs::world& world);
 

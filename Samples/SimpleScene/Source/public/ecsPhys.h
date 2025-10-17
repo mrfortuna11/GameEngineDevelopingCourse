@@ -58,3 +58,19 @@ ECS_STRUCT(Speed,
 	float value;
 });
 
+ECS_STRUCT(Timer,
+{
+	float time;
+});
+
+ECS_STRUCT(Collider,
+{
+	bool shot;
+	bool intersect;
+	bool bullet;
+});
+
+ECS_STRUCT(ToDestroy,
+{
+	float toDestroy;
+});
