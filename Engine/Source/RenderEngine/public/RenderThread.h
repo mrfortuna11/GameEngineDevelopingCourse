@@ -8,10 +8,12 @@
 namespace GameEngine::Render
 {
 	class RenderEngine;
+	class RenderObject;
 
 	enum class ERC : uint32_t
 	{
 		CreateRenderObject = 0,
+		DeleteRenderObject = 1,
 	};
 
 	class RENDER_ENGINE_API RenderThread final

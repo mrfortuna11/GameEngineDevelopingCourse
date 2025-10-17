@@ -60,8 +60,63 @@ local function BounceSystem(it)
     end
 end
 
+local function TimeToKill(it)
+    for ttl, ent in ecs.each(it) do
+        ttl.ttl = ttl.ttl-1
+        if ttl.ttl<=0 then
+            ecs.delete(ent)
+        end
+    end
+end
+
+local position = {}
+local velocity = {}
+local entity = {}
+local hit = {}
+
+local function Saving(it)
+    for pos, vel, tag, ent in ecs.each(it) do
+        table.insert(position, pos)
+        table.insert(velocity, vel)
+        table.insert(entity, ent)
+        table.insert(hit, false)
+    end
+end
+
+local function Collision(it)
+    for pos, vel, tag, ent in ecs.each(it) do
+        for i = 1, #position do
+            local sq_dist = (position[i].x - pos.x)^2+(position[i].y - pos.y)^2+(position[i].z - pos.z)^2
+            if sq_dist<3 then
+                tag.setColor = true
+                vel.x=vel.x + rand_flt(-10, 10)
+                vel.y=vel.y + rand_flt(-10, 10)
+                vel.z=vel.z + rand_flt(-10, 10)
+                hit[i] = true
+            end
+        end
+    end
+end
+
+local function Clear(it)
+    for i = 1, #position do
+        if hit[i] then
+            ecs.delete(entity[i])
+        end
+    end
+    position = {}
+    velocity = {}
+    entity = {}
+    hit = {}
+end
+
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
+ecs.system(TimeToKill, "TimeToKill", ecs.OnUpdate, "BulletKill")
+ecs.system(Saving, "Saving", ecs.OnUpdate, "Position, Velocity, BulletKill")
+ecs.system(Collision, "Collision", ecs.OnUpdate, "Position, Velocity, Object")
+ecs.system(Clear, "Clear", ecs.OnUpdate, "Player")

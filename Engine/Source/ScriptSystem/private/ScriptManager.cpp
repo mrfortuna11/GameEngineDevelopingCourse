@@ -21,7 +21,6 @@ namespace GameEngine::ScriptSystem
 		luaL_openlibs(L);
 
 		AddScript("Physics.lua");
-		AddScript("Logic.lua");
 	}
 
 	ScriptManager::~ScriptManager()
@@ -34,6 +33,8 @@ namespace GameEngine::ScriptSystem
 
 	void ScriptManager::AddScript(const std::string& scriptPath)
 	{
+		lua_State* L = ecs_lua_get_state(m_World);
+
 		std::string path = Core::g_FileSystem->GetScriptsPath(scriptPath).string();
 		Script* script = new Script(path);
 		m_ScriptList.push_back(script);

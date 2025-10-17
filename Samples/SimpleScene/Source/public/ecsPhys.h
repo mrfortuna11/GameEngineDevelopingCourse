@@ -48,6 +48,21 @@ ECS_STRUCT(ShiverAmount,
 	float value;
 });
 
+ECS_STRUCT(BulletKill,
+{
+	float ttl;
+});
+
+ECS_STRUCT(Object,
+{
+	bool setColor;
+});
+
+ECS_STRUCT(ShootCD,
+{
+	float t;
+});
+
 ECS_STRUCT(FrictionAmount,
 {
 	float value;
@@ -58,19 +73,8 @@ ECS_STRUCT(Speed,
 	float value;
 });
 
-ECS_STRUCT(Timer,
+ECS_STRUCT(Player,
 {
-	float time;
+	float value;
 });
 
-ECS_STRUCT(Collider,
-{
-	bool shot;
-	bool intersect;
-	bool bullet;
-});
-
-ECS_STRUCT(ToDestroy,
-{
-	float toDestroy;
-});

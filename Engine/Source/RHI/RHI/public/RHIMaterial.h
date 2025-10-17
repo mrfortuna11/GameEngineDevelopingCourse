@@ -39,6 +39,11 @@ namespace GameEngine::Render
 			HAL::RHIMaterial::ID GetID() { return m_ID; }
 			const HAL::RHIMaterial::ID& GetID() const { return m_ID; }
 
+			void SetAlbedo(RenderCore::Color color) 
+			{
+				m_Albedo = color;
+			}
+
 			RenderCore::Color GetAlbedo() const
 			{
 				return m_Albedo;
