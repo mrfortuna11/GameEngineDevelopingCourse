@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <level name="SomeRandomName">
-   <entity Name="BounceCube" Position="2.0,0.0,0.0" Velocity="0.0,3.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube"/>
-   <entity Name="ControllableCube" Position="-2.0,0.0,0.0" Velocity="0.0,0.0,0.0" Speed="10" FrictionAmount="0.9" JumpSpeed="10" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="0.3" GeometryPtr="Cube" ControllerPtr="Input_default.ini"/>
+   <entity Name="BounceCube" Position="2.0,0.0,0.0" Velocity="0.0,3.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube" Collision="1" TTK="1000"/>
+   <entity Name="ControllableCube" Position="-2.0,0.0,0.0" Velocity="0.0,0.0,0.0" Speed="10" FrictionAmount="0.9" JumpSpeed="10" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="0.3" GeometryPtr="Cube" ControllerPtr="Input_default.ini" Collision="2"/>
+   <entity Name="MovinCube1" Position="5.0,0.0,0.0" Velocity="-1.0,0.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube" Collision="3" TTK="500"/>
+   <entity Name="MovinCube3" Position="10.0,0.0,0.0" Velocity="-2.0,0.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube" Collision="4" TTK="600"/>
+   <entity Name="MovinCube4" Position="15.0,0.0,0.0" Velocity="-4.0,0.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube" Collision="5" TTK="700"/>
+   <entity Name="MovinCube5" Position="20.0,0.0,0.0" Velocity="-2.0,0.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube" Collision="6" TTK="800"/>
+   <entity Name="MovinCube6" Position="25.0,0.0,0.0" Velocity="-9.0,0.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube" Collision="7" TTK="900"/>
 </level>
+

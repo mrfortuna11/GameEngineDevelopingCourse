@@ -20,5 +20,11 @@ namespace GameEngine::EntitySystem::ECS
 			renderThread->ptr->EnqueueCommand(Render::ERC::CreateRenderObject, geometry.ptr, renderObjectPtr);
 			e.remove<GeometryPtr>();
 		});
+
+		world.component<RenderObjectPtr>()
+			.on_remove([&](flecs::entity e, RenderObjectPtr& renderObject)
+		{
+			renderThread->ptr->EnqueueCommand(Render::ERC::DeleteRenderObject, static_cast<RenderCore::Geometry*>(nullptr), renderObject.ptr);
+		});
 	}
 }

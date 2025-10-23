@@ -51,3 +51,17 @@ struct Speed
 	float value;
 };
 
+struct Player
+{
+	bool vl;
+};
+
+struct Collision
+{
+	int id;
+};
+
+struct TTK
+{
+	float time;
+};
