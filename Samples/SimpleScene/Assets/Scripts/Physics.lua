@@ -62,7 +62,7 @@ end
 
 local function TimeToKill(it)
     for ttk, ent in ecs.each(it) do
-        ttk.time = ttk.time-1
+        ttk.time = ttk.time-it.delta_time
         if ttk.time<=0 then
             ecs.delete(ent)
         end
