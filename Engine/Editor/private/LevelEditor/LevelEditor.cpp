@@ -69,7 +69,17 @@ namespace GameEngine
 					{
 						for (World::LevelObject::Component& component : levelObject.GetComponents())
 						{
-							ImGui::InputText(component.first.c_str(), &component.second);
+							if (component.first == "Position") {
+								float pos[3];
+								sscanf(component.second.c_str(), "%f,%f,%f", &pos[0], &pos[1], &pos[2]);
+								ImGui::InputFloat3("Position", pos);
+								char buf[100];
+								sprintf(buf, "%f,%f,%f", pos[0], pos[1], pos[2]);
+								component.second = buf;
+							}
+							else {
+								ImGui::InputText(component.first.c_str(), &component.second);
+							}
 						}
 
 						ImGui::TreePop();
