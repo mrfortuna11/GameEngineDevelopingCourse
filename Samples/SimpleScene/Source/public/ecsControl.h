@@ -23,5 +23,10 @@ struct CameraPtr
 	GameEngine::Core::Camera* ptr;
 };
 
+struct JumpSoundPtr
+{
+	void* soundHandle = nullptr;
+};
+
 void RegisterEcsControlSystems(flecs::world& world);
 

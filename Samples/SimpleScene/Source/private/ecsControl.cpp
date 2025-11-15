@@ -7,6 +7,7 @@
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
+#include <AudioEngine.h>
 
 using namespace GameEngine;
 
@@ -45,8 +46,8 @@ void RegisterEcsControlSystems(flecs::world& world)
 		camera.ptr->SetPosition(Math::Vector3f(position.x, position.y, position.z));
 	});
 
-	world.system<const Position, Velocity, const ControllerPtr, const BouncePlane, const JumpSpeed>()
-		.each([&](const Position& pos, Velocity& vel, const ControllerPtr& controller, const BouncePlane& plane, const JumpSpeed& jump)
+	world.system<const Position, Velocity, const ControllerPtr, const BouncePlane, const JumpSpeed, const JumpSoundPtr>()
+		.each([&](const Position& pos, Velocity& vel, const ControllerPtr& controller, const BouncePlane& plane, const JumpSpeed& jump, const JumpSoundPtr& jumpSound)
 	{
 		constexpr float planeEpsilon = 0.1f;
 		if (plane.x * pos.x + plane.y * pos.y + plane.z * pos.z < plane.w + planeEpsilon)
@@ -54,6 +55,12 @@ void RegisterEcsControlSystems(flecs::world& world)
 			if (controller.ptr->IsPressed("Jump"))
 			{
 				vel.y = jump.value;
+				
+				// Play jump sound if available
+				if (jumpSound.soundHandle != nullptr)
+				{
+					Core::g_AudioEngine.PlaySound(jumpSound.soundHandle);
+				}
 			}
 		}
 	});

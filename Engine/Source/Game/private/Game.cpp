@@ -16,6 +16,9 @@ namespace GameEngine
 		Core::g_MainCamera->SetPosition(Math::Vector3f(0.0f, 12.0f, -10.0f));
 		Core::g_MainCamera->SetViewDir(Math::Vector3f(0.0f, -6.0f, 12.0f));
 
+		// Initialize AudioEngine
+		Core::g_AudioEngine.Init();
+
 		m_renderThread = std::make_unique<Render::RenderThread>();
 
 		GUI::GUIContext::GetInstance()->PlatformInit();
@@ -57,6 +60,9 @@ namespace GameEngine
 		m_EntityManager->Update(dt);
 		m_ScriptManager->Update(dt);
 		m_GameFramework->Update(dt);
+
+		// Update AudioEngine
+		Core::g_AudioEngine.Update();
 
 		// Should be updated last since a lot of logic is binned to the input handler
 		Core::InputHandler::GetInstance()->Update(dt);
