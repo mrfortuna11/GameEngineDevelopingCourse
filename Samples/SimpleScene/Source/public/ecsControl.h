@@ -1,6 +1,11 @@
 #pragma once
 
 #include <flecs.h>
+	
+namespace FMOD 
+{ 
+	class Sound; 
+}
 
 namespace GameEngine::Core
 {
@@ -25,7 +30,7 @@ struct CameraPtr
 
 struct JumpSoundPtr
 {
-	void* soundHandle = nullptr;
+	FMOD::Sound* soundHandle;
 };
 
 void RegisterEcsControlSystems(flecs::world& world);

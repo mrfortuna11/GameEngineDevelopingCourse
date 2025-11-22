@@ -11,8 +11,6 @@
 
 namespace GameEngine
 {
-	RenderCore::Geometry* Cube();
-
 	namespace Editor
 	{
 		LevelEditor::LevelEditor(flecs::world& world) : world(world)
@@ -71,7 +69,8 @@ namespace GameEngine
 					{
 						for (World::LevelObject::Component& component : levelObject.GetComponents())
 						{
-							if (component.first == "Position") {
+							if (component.first == "Position") 
+							{
 								float pos[3];
 								sscanf(component.second.c_str(), "%f,%f,%f", &pos[0], &pos[1], &pos[2]);
 								ImGui::InputFloat3("Position", pos);
@@ -79,7 +78,8 @@ namespace GameEngine
 								sprintf(buf, "%f,%f,%f", pos[0], pos[1], pos[2]);
 								component.second = buf;
 							}
-							else {
+							else 
+							{
 								ImGui::InputText(component.first.c_str(), &component.second);
 							}
 						}

@@ -29,7 +29,7 @@ namespace GameEngine
 			bool m_SaveButtonPressed = false;
 			float m_TimeToShowSaveButtonMessage = 3.f;
 
-			flecs::world& world;
+			flecs::world world;
 
 			std::optional<World::Level> m_Level = std::nullopt;
 		};

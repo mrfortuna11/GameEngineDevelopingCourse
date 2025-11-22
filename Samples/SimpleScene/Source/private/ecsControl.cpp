@@ -59,7 +59,7 @@ void RegisterEcsControlSystems(flecs::world& world)
 				// Play jump sound if available
 				if (jumpSound.soundHandle != nullptr)
 				{
-					Core::g_AudioEngine.PlaySound(jumpSound.soundHandle);
+					Audio::g_AudioEngine.PlaySound(jumpSound.soundHandle);
 				}
 			}
 		}

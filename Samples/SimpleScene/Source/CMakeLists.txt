@@ -42,6 +42,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 	RenderEngine
 	ScriptSystem
 	World
+	Audio
 )
 
 # Defining it here so the Engine's build system stay clear

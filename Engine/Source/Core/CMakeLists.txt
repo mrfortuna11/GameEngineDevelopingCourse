@@ -3,7 +3,6 @@ file(GLOB
 	PRIVATE_FILES
 	private/*.h
 	private/*.cpp
-	private/AudioEngine.cpp
 	private/Window/*.h
 	private/Window/*.cpp
 	private/Debug/*.h
@@ -14,7 +13,6 @@ file(GLOB
 file(GLOB
 	PUBLIC_FILES
 	public/*.h
-	public/AudioEngine.h
 	public/Window/*.h
 	public/Debug/*.h
 	public/Input/*.h
@@ -74,7 +72,6 @@ target_include_directories(Core
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private
 	PRIVATE ${CMAKE_LIBRARY_PATH}/inih/include
-    PRIVATE ${CMAKE_LIBRARY_PATH}/fmod/api/core/inc
 )
 
 # windows-specific
@@ -82,19 +79,12 @@ if (WINDOWS)
 	target_include_directories(Core 
 		PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/Window/Windows
 		PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private/Debug/Windows
-        PRIVATE ${CMAKE_LIBRARY_PATH}/fmod/api/core/inc
 	)
-    # FMOD library
-    find_library(FMOD_LIB NAMES fmod_vc
-        PATHS ${CMAKE_LIBRARY_PATH}/fmod/api/core/lib/x64
-        NO_DEFAULT_PATH)
-    set(FMOD_LIBRARIES ${FMOD_LIB})
 endif()
 
 target_link_libraries(Core PRIVATE
 	Math
 	${INIH_LIBRARIES}
-    ${FMOD_LIBRARIES}
 )
 
 target_precompile_headers(Core
