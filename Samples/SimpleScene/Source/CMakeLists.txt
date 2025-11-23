@@ -75,7 +75,7 @@ target_precompile_headers(${PROJECT_NAME}
 if (WINDOWS)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/../../Engine/External/fmod/api/core/lib/x64/fmod.dll"
+            "${CMAKE_SOURCE_DIR}/../../Engine/External/fmod/api/core/lib/fmod.dll"
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
     )
 endif()

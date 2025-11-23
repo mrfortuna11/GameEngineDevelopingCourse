@@ -89,7 +89,8 @@ namespace GameEngine
 				}
 			}
 
-			if (ImGui::Button("CreateObject")) {
+			if (ImGui::Button("CreateObject")) 
+			{
 				CreateObject();
 			}
 
@@ -126,7 +127,8 @@ namespace GameEngine
 			LevelSerializer::Serialize(Core::g_FileSystem->GetFilePath("Levels/Main.xml").generic_string(), m_Level.value());
 		}
 
-		void LevelEditor::CreateObject() {
+		void LevelEditor::CreateObject() 
+		{
 			flecs::entity entity;
 			World::LevelObject* newObject = m_Level->AddLevelObject(World::LevelObject());
 
