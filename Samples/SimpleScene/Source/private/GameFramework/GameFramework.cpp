@@ -71,6 +71,9 @@ void GameFramework::RegisterComponentsReflection()
 
 	m_World.component<JumpSpeed>()
 		.member<float>("value");
+
+	m_World.component<JumpSoundPtr>()
+		.member<uint64_t>("soundHandle");
 }
 
 void GameFramework::RegisterSystems()

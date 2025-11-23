@@ -1,5 +1,6 @@
 #pragma once
 
+#include <AudioEngine.h>
 #include <EntityManager.h>
 #include <GameFramework/GameFramework.h>
 #include <RenderEngine.h>
